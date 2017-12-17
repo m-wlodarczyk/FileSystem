@@ -5,9 +5,15 @@ public class DiscDrive {
     final int BLOCKS_AMOUNT = 32;                   //Ilosc blokow dyskowych
     int FREE_BLOCKS = 32;                           //Ilosc wolnych blokow dyskowych
 
-    char[] disc = new char[DISC_SIZE];              //Tablica znakow reprezetujaca dysk
+    private char[] disc = new char[DISC_SIZE];              //Tablica znakow reprezetujaca dysk
 
     boolean[] bitVec = new boolean[BLOCKS_AMOUNT];  //Wektor bitowy
+
+    //Metody pomocnicze
+
+    void putByte(char b, int position){
+        disc[position] = b;
+    }
 
     //KONSTRUKTOR
 

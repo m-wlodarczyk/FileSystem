@@ -1,68 +1,66 @@
 public class FileSystem {
-    private DiscDrive HDD = new DiscDrive();                //Dysk
+    private DiscDrive Drive = new DiscDrive();                //Dysk
     private Catalog dir = new Catalog(); 					//Katalog domyslny, w ktorym beda zapisywane wszystkie wpisy - obiekty File
 
     //Operacje na dysku
 
-    void createEmptyFile(String fileName) throws Exception{
-        int index = firstFreeBlock();
-        if (nameExists(fileName)){
-            throw new Exception("File with this name already exists.");
+    public boolean openFile(String fileName) {
+        boolean open = false;
+
+        return open;
+    }
+    /*
+    public boolean closeFile(String fileName) {
+
+    }*/
+    public int createFile(String fileName){
+        if (nameExists(fileName)) { return 2; }
+        else if (Drive.FREE_BLOCKS==0) { return 1; }
+        else {
+            int index = firstFreeBlock();
+            Drive.bitVec[index]=false;
+            dir.add(new File(fileName, index));
+            return 0;
         }
-        else{
-            if (HDD.FREE_BLOCKS>=1 && index!=-1){
-                HDD.FREE_BLOCKS--;
-                HDD.bitVec[index]=false;
-                File temp = new File (fileName, 0, index);
-                dir.add(temp);
+    }
+    public int appendFile(String fileName, String content) {
+        if (!nameExists(fileName)) { return 2; }
+        else if (((double)content.length()/32.0)>Drive.FREE_BLOCKS) { return 1; }
+        else if (dir.getFileByName(fileName).FILE_SIZE==0) {
+            int current_block = firstFreeBlock();
+            Drive.bitVec[current_block]=false;
+            while (content.length()!=0) {
+                int i=0;
+                if (i>31) { current_block=firstFreeBlock(); }
+                Drive.putByte(getChar(content), ((i - 1) + ((current_block * 32))));
+
+                i++;
             }
-            else{
-                throw new Exception("Not enough space to create this file.");
-            }
+            return 0;
+        }
+        else {
+            int current_index = firstFreeBlock();
+            Drive.bitVec[current_index]=false;
+
+            return 0;
         }
     }
-
-    void appendFile(String fileName, String fileContent) throws Exception{
-        if (!nameExists(fileName)){
-            throw new Exception("There is no file with the provided name.");
-        }
-        int size = fileContent.length();
-        int blocks = (int) (Math.ceil (((double) size)/31));
-        if (HDD.FREE_BLOCKS < blocks){
-            throw new Exception("There is not enough space left for this file.");
-        }
-        else{
-            for (int i=0; i<size; i++){
-
-            }
-        }
-    }
-
-    void createFile(String fileName, String fileContent) throws Exception{
+   /* public boolean deleteContent(String fileName) {
 
     }
-
-    void deleteFile(String fileName) throws Exception{
-
-    }
-
-    void renameFile(String oldName, String newName) throws Exception{
+    public String readFile(String fileName) {
 
     }
+    public boolean deleteFile(String fileName) {
 
-    String readFile(String fileName) throws Exception{
-        return " ";
     }
+    public boolean renameFile(String oldName, String newName) {
 
-    String[] list(){
-        String[] res = new String[dir.size()];
-        return res;
     }
+    public String list() {
 
-    File getFilebyName(String fileName) throws Exception{
-        return dir.getFileForName(fileName);
     }
-
+*/
     //Metody pomocnicze
 
     private boolean nameExists(String name){
@@ -76,14 +74,24 @@ public class FileSystem {
     }
 
     private int firstFreeBlock(){
-        int index=-1;
-        for (int i=0; i<HDD.BLOCKS_AMOUNT; i++){
-            if (HDD.bitVec[i]){
+        int index=33;
+        for (int i=0; i<Drive.BLOCKS_AMOUNT; i++){
+            if (Drive.bitVec[i]){
                 index=i;
                 break;
             }
         }
         return index;
+    }
+
+    private static char getChar(String str){
+        return str.charAt(0);
+    }
+
+    private static String removeChar(String s) {
+        StringBuilder build = new StringBuilder(s);
+        build.deleteCharAt(0);
+        return build.toString();
     }
 
 }

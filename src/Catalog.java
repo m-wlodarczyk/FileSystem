@@ -8,9 +8,7 @@ public class Catalog extends FileBase {
         this.root.add(file);
     }
 
-    public int size(){
-        return root.size();
-    }
+    public int size(){ return root.size(); }
 
     public Catalog(){
         root = new ArrayList<File>();
@@ -20,7 +18,7 @@ public class Catalog extends FileBase {
         return root.get(i);
     }
 
-    public File getFileForName(String name) throws Exception{
+    public File getFileByName(String name) {
         File tempFile = null;
         for(File file : root){
             if(file.FILE_NAME.equals(name)){
@@ -28,9 +26,7 @@ public class Catalog extends FileBase {
             }
         }
 
-        if(tempFile == null){
-            throw new Exception("There is no file with this name.");
-        }
         return tempFile;
     }
+
 }

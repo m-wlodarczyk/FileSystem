@@ -11,4 +11,10 @@ public class File extends FileBase {
         this.FILE_SIZE=size;
         this.FIRST_BLOCK=first;
     }
+
+    public File(String name, int first){
+        this.FILE_NAME=name;
+        this.FILE_SIZE=0;
+        this.FIRST_BLOCK=first;
+    }
 }
