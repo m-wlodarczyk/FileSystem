@@ -33,7 +33,7 @@ public class FileSystem {
             int i=0;
             while (content.length()!=0) {
                 Drive.putByte(getChar(content), (i + ((current_block * 32))));
-                content=removeChar(content);
+                if (i+1!=32) { content=removeChar(content); }
                 if (content.length()==0) { Drive.putByte((char) 32 , (current_block+1) * 32 - 1); }
                 if (i+1==32) {
                     Drive.putByte((char) firstFreeBlock(), (current_block+1) * 32 - 1);
