@@ -2,40 +2,27 @@ public class FileSystemTester {
 
     public static void main(String[] args) {
         DiscDrive hdd = new DiscDrive();
-        int i = 5, current_block=3;
-        int pos=((i - 1) + ((current_block * 32)));
+        FileSystem drive = new FileSystem();
+        //int /*i = 5,*/ current_block=0;
+        /*int pos=((i - 1) + ((current_block * 32)));*/
+        /*String content = "abcdefghijklmnoprstuwxyz1234567890!";
+        int i=0;
 
-        hdd.putByte('a', pos);
-        hdd.print();
+        while (content.length()>=1) {
 
-        /*
-        //hdd.fill2();
-        //hdd.print();
-        String pom = "No siema!";
+            //if (i>31) { current_block=firstFreeBlock(); }
+            hdd.putByte(getChar(content), (i + ((current_block * 32))));
+            content=removeChar(content);
+            i++;
+        }
+        hdd.print();*/
 
-        String pom1 = "";
-        String pom2 = " ";
+        drive.createFile("plik1");
+        drive.createFile("plik2");
+        drive.appendFile("plik1", "Gitara Siema! Gitara Siema! Gitara Siema! Gitara Siema! Gitara Siema! Gitara Siema! Gitara Siema!");
+        drive.printDrive();
+        drive.printBitVec();
 
-        int size = 64;
-
-        int blocks = (int) (Math.ceil (((double) size)/31));
-
-        char a = 0;
-
-        int b = a;
-
-        System.out.print(a);
-        System.out.print(b);
-        */
-        /*System.out.println(pom);
-        System.out.println(pom.length());
-        System.out.println(pom1);
-        System.out.println(pom1.length());
-        System.out.println(pom2);
-        System.out.println(pom2.length());*/
-
-        //System.out.println(blocks);
-        //System.out.print(pom.charAt(0));
         /*
         String str = "this is Java";
         System.out.println(str);

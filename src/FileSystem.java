@@ -19,6 +19,7 @@ public class FileSystem {
         else {
             int index = firstFreeBlock();
             Drive.bitVec[index]=false;
+            Drive.putByte((char) 32 , (index+1) *32 - 1);
             dir.add(new File(fileName, index));
             return 0;
         }
@@ -27,13 +28,19 @@ public class FileSystem {
         if (!nameExists(fileName)) { return 2; }
         else if (((double)content.length()/32.0)>Drive.FREE_BLOCKS) { return 1; }
         else if (dir.getFileByName(fileName).FILE_SIZE==0) {
-            int current_block = firstFreeBlock();
-            Drive.bitVec[current_block]=false;
+            dir.getFileByName(fileName).FILE_SIZE=content.length();
+            int current_block = dir.getBlockByName(fileName);
+            int i=0;
             while (content.length()!=0) {
-                int i=0;
-                if (i>31) { current_block=firstFreeBlock(); }
-                Drive.putByte(getChar(content), ((i - 1) + ((current_block * 32))));
-
+                Drive.putByte(getChar(content), (i + ((current_block * 32))));
+                content=removeChar(content);
+                if (content.length()==0) { Drive.putByte((char) 32 , (current_block+1) * 32 - 1); }
+                if (i+1==32) {
+                    Drive.putByte((char) firstFreeBlock(), (current_block+1) * 32 - 1);
+                    current_block=firstFreeBlock();
+                    Drive.bitVec[current_block]=false;
+                    i=0;
+                }
                 i++;
             }
             return 0;
@@ -57,10 +64,15 @@ public class FileSystem {
     public boolean renameFile(String oldName, String newName) {
 
     }
+    */
     public String list() {
-
+        String dir_list = new String();
+        for (int i=0; i<dir.size(); i++) {
+            dir_list=dir_list + dir.get(i).FILE_NAME + "\n";
+        }
+        return dir_list;
     }
-*/
+
     //Metody pomocnicze
 
     private boolean nameExists(String name){
@@ -92,6 +104,16 @@ public class FileSystem {
         StringBuilder build = new StringBuilder(s);
         build.deleteCharAt(0);
         return build.toString();
+    }
+
+    //Testowanie
+
+    public void printBitVec(){
+        Drive.printBitVec();
+    }
+
+    public void printDrive() {
+        Drive.print();
     }
 
 }

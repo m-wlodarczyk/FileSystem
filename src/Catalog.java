@@ -29,4 +29,8 @@ public class Catalog extends FileBase {
         return tempFile;
     }
 
+    public int getBlockByName(String fileName){
+        return getFileByName(fileName).FIRST_BLOCK;
+    }
+
 }

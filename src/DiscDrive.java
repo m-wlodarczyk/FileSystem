@@ -45,9 +45,22 @@ public class DiscDrive {
             if (i%32==0 && i>0){
                 System.out.println();
             }
-            System.out.print('[');
-            System.out.print(disc[i]);
-            System.out.print(']');
+            else {
+                System.out.print('[');
+                System.out.print(disc[i]);
+                System.out.print(']');
+            }
+        }
+    }
+
+    public void printBitVec(){
+        for (boolean a : bitVec) {
+            if (a==true){
+                System.out.print(1);
+            }
+            else {
+                System.out.print(0);
+            }
         }
     }
 }
