@@ -2,7 +2,7 @@ public class DiscDrive {
 
     final int DISC_SIZE = 1024;                     //Rozmiar dysku
     final int BLOCK_SIZE = 32;                      //Rozmiar bloku dyskowego
-    final int BLOCKS_AMOUNT = 32;                   //Ilosc blokow dyskowych
+    final int BLOCKS_AMOUNT = DISC_SIZE/BLOCK_SIZE;                   //Ilosc blokow dyskowych
     int FREE_BLOCKS = 32;                           //Ilosc wolnych blokow dyskowych
 
     private char[] disc = new char[DISC_SIZE];              //Tablica znakow reprezetujaca dysk
@@ -45,11 +45,10 @@ public class DiscDrive {
             if (i%32==0 && i>0){
                 System.out.println();
             }
-            else {
-                System.out.print('[');
-                System.out.print(disc[i]);
-                System.out.print(']');
-            }
+            System.out.print('[');
+            System.out.print(disc[i]);
+            System.out.print(']');
+
         }
     }
 

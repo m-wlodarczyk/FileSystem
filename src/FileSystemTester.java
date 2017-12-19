@@ -19,9 +19,16 @@ public class FileSystemTester {
 
         drive.createFile("plik1");
         drive.createFile("plik2");
-        drive.appendFile("plik1", "Gitara Siema! Gitara Siema! Gitara Siema! Gitara Siema! Gitara Siema! Gitara Siema! Gitara Siema!");
+        drive.appendFile("plik1", "Lorem ipsum dolor sit amet, consectetur adipiscing elit.");
+        drive.appendFile("plik1", " Pellentesque lobortis est sed elit vestibulum ultricies.");
+        drive.appendFile("plik2", "Sed egestas sem id aliquet vulputate. Integer consectetur maximus risus et placerat. Vivamus ac pulvinar mauris, varius pretium augue.");
+
+
         drive.printDrive();
+        System.out.println();
         drive.printBitVec();
+        System.out.println();
+        System.out.println(drive.list());
 
         /*
         String str = "this is Java";
