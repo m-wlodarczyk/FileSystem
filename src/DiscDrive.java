@@ -15,6 +15,10 @@ public class DiscDrive {
         disc[position] = b;
     }
 
+    int lastByte(int block_num) {
+        return (int) disc[(block_num+1)*32-1];
+    }
+
     //KONSTRUKTOR
 
     public DiscDrive(){for (int i=0; i<BLOCKS_AMOUNT; i++){bitVec[i]=true;}}

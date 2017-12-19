@@ -1,5 +1,5 @@
 public class FileSystem {
-    private DiscDrive Drive = new DiscDrive();                //Dysk
+    /*private*/ DiscDrive Drive = new DiscDrive();                //Dysk
     private Catalog dir = new Catalog(); 					//Katalog domyslny, w ktorym beda zapisywane wszystkie wpisy - obiekty File
 
     //Operacje na dysku
@@ -18,7 +18,7 @@ public class FileSystem {
         else if (Drive.FREE_BLOCKS==0) { return 1; }
         else {
             int index = firstFreeBlock();
-            Drive.bitVec[index]=false;
+            Drive.bitVec[index] = false;
             Drive.putByte((char) 32 , (index+1) *32 - 1);
             dir.add(new File(fileName, index));
             return 0;
@@ -42,27 +42,53 @@ public class FileSystem {
                 }
                 Drive.putByte(getChar(content), (i + ((current_block * 32))));
                 content=removeChar(content);
-                if (content.length()==0) { dir.setLastBlock(fileName, current_block); ; Drive.putByte((char) 32 , (current_block+1) * 32 - 1); }
+                if (content.length()==0) { dir.setLastBlock(fileName, current_block); Drive.putByte((char) 32 , (current_block+1) * 32 - 1); }
                 i++;
             }
             return 0;
         }
     }
 
-   /* public boolean deleteContent(String fileName) {
-
+    public boolean deleteContent(String fileName) {
+        if (!nameExists(fileName)) { return false; }
+        else {
+            int block = dir.getFirstBlock(fileName);
+            dir.changeLast(fileName, block);
+            dir.changeSize(fileName, 0);
+            for (int i = block*32; i<block*32 + 31; i++) {
+                 Drive.putByte((char) 0, i);
+            }
+            block = Drive.lastByte(block);
+            while (block != 32) {
+                Drive.bitVec[block] = true;
+                block = Drive.lastByte(block);
+            }
+            return true;
+        }
     }
-
+    /*
     public String readFile(String fileName) {
 
     }
     */
-    public boolean deleteFile(String fileName) {
 
+    public boolean deleteFile(String fileName) {
+        if (!nameExists(fileName)) { return false; }
+        else {
+            int block = dir.getFirstBlock(fileName);
+            while (block != 32){
+                Drive.bitVec[block] = true;
+                block = Drive.lastByte(block);
+            }
+            dir.deleteFile(fileName);
+            return true;
+        }
     }
 
-    public boolean renameFile(String oldName, String newName) {
-
+    public int renameFile(String oldName, String newName) {
+        if (!nameExists(oldName)) { return 2; }
+        if (nameExists(newName)) { return 1; }
+        else { dir.changeName(oldName, newName); return 0; }
     }
 
     public String list() {

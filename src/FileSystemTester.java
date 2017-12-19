@@ -23,15 +23,27 @@ public class FileSystemTester {
         drive.appendFile("plik1", " Pellentesque lobortis est sed elit vestibulum ultricies.");
         drive.appendFile("plik2", "Sed egestas sem id aliquet vulputate. Integer consectetur maximus risus et placerat. Vivamus ac pulvinar mauris, varius pretium augue.");
 
-
         drive.printDrive();
         System.out.println();
         drive.printBitVec();
         System.out.println();
         System.out.println(drive.list());
 
-        /*
-        String str = "this is Java";
+        drive.deleteFile("plik1");
+        drive.printDrive();
+        System.out.println();
+        drive.printBitVec();
+        System.out.println();
+        System.out.println(drive.list());
+
+        drive.deleteContent("plik2");
+        drive.printDrive();
+        System.out.println();
+        drive.printBitVec();
+        System.out.println();
+        System.out.println(drive.list());
+
+        /*String str = "this is Java";
         System.out.println(str);
         System.out.println(str.length());
 
