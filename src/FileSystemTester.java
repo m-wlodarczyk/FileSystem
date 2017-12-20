@@ -29,7 +29,10 @@ public class FileSystemTester {
         System.out.println();
         System.out.println(drive.list());
 
-        drive.deleteFile("plik1");
+        drive.openFile("plik1");
+        System.out.println(drive.readFile("plik1"));
+
+        /*drive.deleteFile("plik1");
         drive.printDrive();
         System.out.println();
         drive.printBitVec();
@@ -41,7 +44,7 @@ public class FileSystemTester {
         System.out.println();
         drive.printBitVec();
         System.out.println();
-        System.out.println(drive.list());
+        System.out.println(drive.list());*/
 
         /*String str = "this is Java";
         System.out.println(str);

@@ -1,18 +1,32 @@
 public class FileSystem {
     /*private*/ DiscDrive Drive = new DiscDrive();                //Dysk
-    private Catalog dir = new Catalog(); 					//Katalog domyslny, w ktorym beda zapisywane wszystkie wpisy - obiekty File
+    private Catalog dir = new Catalog(); 					//Katalog domyslny, w ktorym zapisywane sa wszystkie wpisy - obiekty File
 
     //Operacje na dysku
 
-    public boolean openFile(String fileName) {
-        boolean open = false;
-
-        return open;
+    public int openFile(String fileName) {
+        if (!nameExists(fileName)) { return 2; }
+        else {
+            String tmp = new String();
+            int block = dir.getFirstBlock(fileName), i=0;
+            while (tmp.length()<=dir.getSize(fileName)) {
+                if (i==31) {
+                    block = Drive.lastByte(block);
+                    i=0;
+                }
+                tmp += Drive.getAt(i+block*32);
+                i++;
+            }
+            dir.open_file(fileName, tmp);
+            return 0;
+        }
     }
-    /*
-    public boolean closeFile(String fileName) {
 
-    }*/
+    public int closeFile(String fileName) {
+        if (!nameExists(fileName)) { return 2; }
+        else { dir.close_file(fileName); return 0; }
+    }
+
     public int createFile(String fileName){
         if (nameExists(fileName)) { return 2; }
         else if (Drive.FREE_BLOCKS==0) { return 1; }
@@ -34,7 +48,7 @@ public class FileSystem {
             else { current_block = dir.getLastBlock(fileName); i = dir.getFileByName(fileName).FILE_SIZE%31; }
             dir.getFileByName(fileName).FILE_SIZE += content.length();
             while (content.length()!=0) {
-                if (i+1==32) {
+                if (i==31) {
                     Drive.putByte((char) firstFreeBlock(), (current_block+1) * 32 - 1);
                     current_block=firstFreeBlock();
                     Drive.bitVec[current_block]=false;
@@ -66,11 +80,11 @@ public class FileSystem {
             return true;
         }
     }
-    /*
-    public String readFile(String fileName) {
 
+    public String readFile(String fileName) {
+        if (dir.open_check(fileName)) { return dir.getContent(fileName); }
+        else { return new String(); }
     }
-    */
 
     public boolean deleteFile(String fileName) {
         if (!nameExists(fileName)) { return false; }

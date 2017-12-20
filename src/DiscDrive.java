@@ -19,6 +19,8 @@ public class DiscDrive {
         return (int) disc[(block_num+1)*32-1];
     }
 
+    char getAt(int index) { return this.disc[index]; }
+
     //KONSTRUKTOR
 
     public DiscDrive(){for (int i=0; i<BLOCKS_AMOUNT; i++){bitVec[i]=true;}}

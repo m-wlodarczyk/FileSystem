@@ -33,6 +33,26 @@ public class Catalog extends FileBase {
         }
     }
 
+    public void open_file(String fileName, String content) {
+        for(File file : root){
+            if(file.FILE_NAME.equals(fileName)){ file.open(content); }
+        }
+    }
+
+    public void close_file(String fileName) {
+        for(File file : root){
+            if(file.FILE_NAME.equals(fileName)){ file.close(); }
+        }
+    }
+
+    public int getSize(String fileName) {
+        int size = 0;
+        for (File file : root){
+            if(file.FILE_NAME.equals(fileName)){ size=file.FILE_SIZE; }
+        }
+        return size;
+    }
+
     public void changeName(String oldName, String newName){
         for(File file : root){
             if(file.FILE_NAME.equals(oldName)){ file.FILE_NAME=newName; }
@@ -60,5 +80,23 @@ public class Catalog extends FileBase {
                 break;
             }
         }
+    }
+
+    public boolean open_check(String fileName) {
+        for(File file : root){
+            if(file.FILE_NAME.equals(fileName)){
+                if (!file.opened) { return false; }
+                else { return true; }
+            }
+        }
+        return false;
+    }
+
+    public String getContent(String fileName) {
+        String res = new String();
+        for(File file : root){
+            if(file.FILE_NAME.equals(fileName)) { res = file.opened_file; }
+        }
+        return res;
     }
 }
