@@ -1,5 +1,4 @@
 public class DiscDrive {
-
     final int DISC_SIZE = 1024;                     //Rozmiar dysku
     final int BLOCK_SIZE = 32;                      //Rozmiar bloku dyskowego
     final int BLOCKS_AMOUNT = DISC_SIZE/BLOCK_SIZE;                   //Ilosc blokow dyskowych

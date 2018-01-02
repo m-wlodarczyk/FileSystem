@@ -1,11 +1,11 @@
 public class FileSystem {
-    /*private*/ DiscDrive Drive = new DiscDrive();                //Dysk
-    private Catalog dir = new Catalog(); 					//Katalog domyslny, w ktorym zapisywane sa wszystkie wpisy - obiekty File
+    DiscDrive Drive = new DiscDrive();      //Dysk
+    /*private*/ Catalog dir = new Catalog();    //Katalog domyslny, w ktorym zapisywane sa wszystkie wpisy - obiekty File
 
     //Operacje na dysku
 
-    public int openFile(String fileName) {
-        if (!nameExists(fileName)) { return 2; }
+    public void openFile(String fileName) throws Exception {
+        if (!nameExists(fileName)) { throw new Exception("Plik o takiej nazwie nie istnieje."); }
         else {
             String tmp = new String();
             int block = dir.getFirstBlock(fileName), i=0;
@@ -17,32 +17,34 @@ public class FileSystem {
                 tmp += Drive.getAt(i+block*32);
                 i++;
             }
-            dir.open_file(fileName, tmp);
-            return 0;
+            dir.updateFileContent(fileName, tmp);
         }
     }
 
-    public int closeFile(String fileName) {
-        if (!nameExists(fileName)) { return 2; }
-        else { dir.close_file(fileName); return 0; }
+    public void closeFile(String fileName) throws Exception {
+        if (!nameExists(fileName)) { throw new Exception("Plik o takiej nazwie nie istnieje."); }
+        else if (!dir.open_check(fileName)) { throw new Exception("Plik o takiej nazwie nie jest otwarty."); }
+        else { dir.close_file(fileName); }
     }
 
-    public int createFile(String fileName){
-        if (nameExists(fileName)) { return 2; }
-        else if (Drive.FREE_BLOCKS==0) { return 1; }
+    public void createFile(String fileName) throws Exception {
+        if (nameExists(fileName)) { throw new Exception("Plik o takiej nazwie istnieje."); }
+        else if (Drive.FREE_BLOCKS==0) { throw new Exception("Za mało miejsca na dysku."); }
         else {
             int index = firstFreeBlock();
             Drive.bitVec[index] = false;
+            Drive.FREE_BLOCKS--;
             Drive.putByte((char) 32 , (index+1) *32 - 1);
             dir.add(new File(fileName, index));
-            return 0;
         }
     }
 
-    public int appendFile(String fileName, String content) {
-        if (!nameExists(fileName)) { return 2; }
-        else if (((double)content.length()/32.0)>Drive.FREE_BLOCKS) { return 1; }
+    public void appendFile(String fileName, String content) throws Exception {
+        if (!nameExists(fileName)) { throw new Exception("Plik o takiej nazwie nie istnieje."); }
+        else if (!dir.open_check(fileName)) { throw new Exception("Plik o takiej nazwie nie jest otwarty."); }
+        else if (((double)content.length()/31.0)>Drive.FREE_BLOCKS) { throw new Exception("Za mało miejsca na dysku."); }
         else {
+            dir.updateFileContent(fileName, content);
             int current_block, i;
             if (dir.getFileByName(fileName).FILE_SIZE==0) { current_block = dir.getFirstBlock(fileName); i = 0; }
             else { current_block = dir.getLastBlock(fileName); i = dir.getFileByName(fileName).FILE_SIZE%31; }
@@ -52,6 +54,7 @@ public class FileSystem {
                     Drive.putByte((char) firstFreeBlock(), (current_block+1) * 32 - 1);
                     current_block=firstFreeBlock();
                     Drive.bitVec[current_block]=false;
+                    Drive.FREE_BLOCKS--;
                     i=0;
                 }
                 Drive.putByte(getChar(content), (i + ((current_block * 32))));
@@ -59,35 +62,35 @@ public class FileSystem {
                 if (content.length()==0) { dir.setLastBlock(fileName, current_block); Drive.putByte((char) 32 , (current_block+1) * 32 - 1); }
                 i++;
             }
-            return 0;
         }
     }
 
-    public boolean deleteContent(String fileName) {
-        if (!nameExists(fileName)) { return false; }
+    public void deleteContent(String fileName) throws Exception {
+        if (!nameExists(fileName)) { throw new Exception("Plik o takiej nazwie nie istnieje."); }
+        else if (!dir.open_check(fileName)) { throw new Exception("Plik o takiej nazwie nie jest otwarty."); }
         else {
             int block = dir.getFirstBlock(fileName);
             dir.changeLast(fileName, block);
             dir.changeSize(fileName, 0);
             for (int i = block*32; i<block*32 + 31; i++) {
-                 Drive.putByte((char) 0, i);
+                Drive.putByte((char) 0, i);
             }
             block = Drive.lastByte(block);
             while (block != 32) {
                 Drive.bitVec[block] = true;
                 block = Drive.lastByte(block);
             }
-            return true;
         }
     }
 
-    public String readFile(String fileName) {
-        if (dir.open_check(fileName)) { return dir.getContent(fileName); }
-        else { return new String(); }
+    public String readFile(String fileName) throws Exception {
+        if (!nameExists(fileName)) { throw new Exception("Plik o takiej nazwie nie istnieje."); }
+        else if (!dir.open_check(fileName)) { throw new Exception("Plik o takiej nazwie nie jest otwarty."); }
+        else { return dir.getContent(fileName); }
     }
 
-    public boolean deleteFile(String fileName) {
-        if (!nameExists(fileName)) { return false; }
+    public void deleteFile(String fileName) throws Exception {
+        if (!nameExists(fileName)) { throw new Exception("Plik o takiej nazwie nie istnieje."); }
         else {
             int block = dir.getFirstBlock(fileName);
             while (block != 32){
@@ -95,14 +98,13 @@ public class FileSystem {
                 block = Drive.lastByte(block);
             }
             dir.deleteFile(fileName);
-            return true;
         }
     }
 
-    public int renameFile(String oldName, String newName) {
-        if (!nameExists(oldName)) { return 2; }
-        if (nameExists(newName)) { return 1; }
-        else { dir.changeName(oldName, newName); return 0; }
+    public void renameFile(String oldName, String newName) throws Exception {
+        if (!nameExists(oldName)) { throw new Exception("Plik o takiej nazwie nie istnieje."); }
+        if (nameExists(newName)) { throw new Exception("Plik o takiej nazwie już istnieje."); }
+        else { dir.changeName(oldName, newName); }
     }
 
     public String list() {

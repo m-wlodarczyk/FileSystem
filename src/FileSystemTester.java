@@ -1,7 +1,7 @@
 public class FileSystemTester {
 
     public static void main(String[] args) {
-        DiscDrive hdd = new DiscDrive();
+        //DiscDrive hdd = new DiscDrive();
         FileSystem drive = new FileSystem();
         //int /*i = 5,*/ current_block=0;
         /*int pos=((i - 1) + ((current_block * 32)));*/
@@ -17,11 +17,58 @@ public class FileSystemTester {
         }
         hdd.print();*/
 
-        drive.createFile("plik1");
-        drive.createFile("plik2");
-        drive.appendFile("plik1", "Lorem ipsum dolor sit amet, consectetur adipiscing elit.");
-        drive.appendFile("plik1", " Pellentesque lobortis est sed elit vestibulum ultricies.");
-        drive.appendFile("plik2", "Sed egestas sem id aliquet vulputate. Integer consectetur maximus risus et placerat. Vivamus ac pulvinar mauris, varius pretium augue.");
+        try {
+            drive.createFile("plik1");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            drive.openFile("plik1");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            drive.appendFile("plik1", "Lorem ipsum dolor sit amet, consectetur adipiscing elit.");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        String toPrint = new String();
+        try {
+            toPrint = drive.readFile("plik1");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        System.out.println(drive.dir.getSize("plik1"));
+        System.out.println("Poczatek");
+        System.out.println(toPrint);
+        System.out.println("Koniec");
+
+        /*
+        try {
+            drive.createFile("plik1");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            drive.createFile("plik2");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            drive.appendFile("plik1", "Lorem ipsum dolor sit amet, consectetur adipiscing elit.");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            drive.appendFile("plik1", " Pellentesque lobortis est sed elit vestibulum ultricies.");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            drive.appendFile("plik2", "Sed egestas sem id aliquet vulputate. Integer consectetur maximus risus et placerat. Vivamus ac pulvinar mauris, varius pretium augue.");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         drive.printDrive();
         System.out.println();
@@ -29,8 +76,48 @@ public class FileSystemTester {
         System.out.println();
         System.out.println(drive.list());
 
-        drive.openFile("plik1");
-        System.out.println(drive.readFile("plik1"));
+        try {
+            drive.openFile("plik2");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            drive.appendFile("plik2", "Lorem ipsum dolor sit amet, consectetur adipiscing elit.");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            drive.deleteFile("plik1");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            drive.appendFile("plik2", " Pellentesque lobortis est sed elit vestibulum ultricies.");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        drive.printDrive();
+        System.out.println();
+        drive.printBitVec();
+        System.out.println();
+        System.out.println(drive.list());
+
+        String toPrint = new String();
+
+        try {
+            toPrint=drive.readFile("plik2");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("Poczatek");
+        System.out.println(toPrint);
+        System.out.println("Koniec");
+
+        System.out.println("Poczatek");
+        System.out.println(drive.dir.getFileByName("plik2").getCon());
+        System.out.println("Koniec");
 
         /*drive.deleteFile("plik1");
         drive.printDrive();
