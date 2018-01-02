@@ -1,6 +1,6 @@
 public class FileSystem {
-    /*private*/ DiscDrive Drive = new DiscDrive();                //Dysk
-    private Catalog dir = new Catalog(); 					//Katalog domyslny, w ktorym zapisywane sa wszystkie wpisy - obiekty File
+    DiscDrive Drive = new DiscDrive();      //Dysk
+    private Catalog dir = new Catalog();    //Katalog domyslny, w ktorym zapisywane sa wszystkie wpisy - obiekty File
 
     //Operacje na dysku
 
@@ -24,6 +24,7 @@ public class FileSystem {
 
     public int closeFile(String fileName) {
         if (!nameExists(fileName)) { return 2; }
+        else if (!dir.open_check(fileName)) { return 3; }
         else { dir.close_file(fileName); return 0; }
     }
 
@@ -33,6 +34,7 @@ public class FileSystem {
         else {
             int index = firstFreeBlock();
             Drive.bitVec[index] = false;
+            Drive.FREE_BLOCKS--;
             Drive.putByte((char) 32 , (index+1) *32 - 1);
             dir.add(new File(fileName, index));
             return 0;
@@ -41,7 +43,8 @@ public class FileSystem {
 
     public int appendFile(String fileName, String content) {
         if (!nameExists(fileName)) { return 2; }
-        else if (((double)content.length()/32.0)>Drive.FREE_BLOCKS) { return 1; }
+        else if (!dir.open_check(fileName)) { return 3; }
+        else if (((double)content.length()/31.0)>Drive.FREE_BLOCKS) { return 1; }
         else {
             int current_block, i;
             if (dir.getFileByName(fileName).FILE_SIZE==0) { current_block = dir.getFirstBlock(fileName); i = 0; }
@@ -52,6 +55,7 @@ public class FileSystem {
                     Drive.putByte((char) firstFreeBlock(), (current_block+1) * 32 - 1);
                     current_block=firstFreeBlock();
                     Drive.bitVec[current_block]=false;
+                    Drive.FREE_BLOCKS--;
                     i=0;
                 }
                 Drive.putByte(getChar(content), (i + ((current_block * 32))));
@@ -63,8 +67,9 @@ public class FileSystem {
         }
     }
 
-    public boolean deleteContent(String fileName) {
-        if (!nameExists(fileName)) { return false; }
+    public int deleteContent(String fileName) {
+        if (!nameExists(fileName)) { return 2; }
+        else if (!dir.open_check(fileName)) { return 3; }
         else {
             int block = dir.getFirstBlock(fileName);
             dir.changeLast(fileName, block);
@@ -77,17 +82,17 @@ public class FileSystem {
                 Drive.bitVec[block] = true;
                 block = Drive.lastByte(block);
             }
-            return true;
+            return 0;
         }
     }
 
     public String readFile(String fileName) {
-        if (dir.open_check(fileName)) { return dir.getContent(fileName); }
-        else { return new String(); }
+        if (dir.open_check(fileName)) { return "0" + dir.getContent(fileName); }
+        else { return "1"; }
     }
 
-    public boolean deleteFile(String fileName) {
-        if (!nameExists(fileName)) { return false; }
+    public int deleteFile(String fileName) {
+        if (!nameExists(fileName)) { return 2; }
         else {
             int block = dir.getFirstBlock(fileName);
             while (block != 32){
@@ -95,7 +100,7 @@ public class FileSystem {
                 block = Drive.lastByte(block);
             }
             dir.deleteFile(fileName);
-            return true;
+            return 0;
         }
     }
 

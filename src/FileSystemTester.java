@@ -29,8 +29,17 @@ public class FileSystemTester {
         System.out.println();
         System.out.println(drive.list());
 
-        drive.openFile("plik1");
-        System.out.println(drive.readFile("plik1"));
+        drive.openFile("plik2");
+        drive.appendFile("plik2", "Lorem ipsum dolor sit amet, consectetur adipiscing elit.");
+        drive.deleteFile("plik1");
+        drive.appendFile("plik2", " Pellentesque lobortis est sed elit vestibulum ultricies.");
+        drive.closeFile("plik2");
+
+        drive.printDrive();
+        System.out.println();
+        drive.printBitVec();
+        System.out.println();
+        System.out.println(drive.list());
 
         /*drive.deleteFile("plik1");
         drive.printDrive();
